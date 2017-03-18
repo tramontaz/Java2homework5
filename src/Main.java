@@ -40,9 +40,12 @@ public class Main {
         Thread second = new Thread(new Runnable() {
             @Override
             public void run() {
+                /* problem here:
+                The formula uses a loop iterator, so we need to change it to the iterator value as the iterator value in the whole cycle.*/
                 long iteratorForArrayPartTwo = capacity / 2;
                 for (int i = 0; i <arrayPartTwo.length ; i++) {
-                    arrayPartTwo[i] = (float)(arrayPartTwo[i] * Math.sin(0.2f + iteratorForArrayPartTwo / 5) * Math.cos(0.2f + iteratorForArrayPartTwo / 5) * Math.cos(0.4f + iteratorForArrayPartTwo / 2));
+                    arrayPartTwo[i] = (float)(arrayPartTwo[i] * Math.sin(0.2f + iteratorForArrayPartTwo / 5) *
+                            Math.cos(0.2f + iteratorForArrayPartTwo / 5) * Math.cos(0.4f + iteratorForArrayPartTwo / 2));
                     iteratorForArrayPartTwo++;
                 }
             }
@@ -66,8 +69,7 @@ public class Main {
 
     // method for counting execution time
     private static float countAndDisplayTheExecutionTime(long stopTime, long startTime){
-        float executionTimeOfTheOperation = (stopTime - startTime) * 0.000000001f;
-        return executionTimeOfTheOperation;
+        return (stopTime - startTime) * 0.000000001f;
     }
 
     // method for counting sum of array elements
