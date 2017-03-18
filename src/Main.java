@@ -3,8 +3,8 @@
  */
 public class Main {
     private static final int capacity = 10000000;
-    private static final int numberOfThreads = 2;
     private static final float[] wholeArray = new float[capacity];
+    private static final float[] gluedArray = new float[capacity];
     private static final float[] arrayPartOne = new float[capacity / 2];
     private static final float[] arrayPartTwo = new float[capacity / 2];
     private static long stopTime;
@@ -13,21 +13,22 @@ public class Main {
 
     public static void main(String[] args) {
         for (int i = 0; i <wholeArray.length ; i++) wholeArray[i] = 1;
+        for (int i = 0; i <gluedArray.length ; i++) gluedArray[i] = 1;
+
         startTime = System.nanoTime();
         for (int i = 0; i <wholeArray.length ; i++) {
             wholeArray[i] = (float)(wholeArray[i] * Math.sin(0.2f + i / 5) * Math.cos(0.2f + i / 5) * Math.cos(0.4f + i / 2));
         }
         stopTime = System.nanoTime();
-        System.out.println("Время выполнения операции без разделения массива: " + countAndDisplayTheExecutionTime(stopTime, startTime) + " сек");
-        System.out.println("Сумма элементов массива: " + sumOfArrayElements(wholeArray));
+        System.out.println("The time of the operation without dividing the array: " + countAndDisplayTheExecutionTime(stopTime, startTime) + " sec");
+//        System.out.println("sum of array elements: " + sumOfArrayElements(wholeArray)); // Comment off for show sum of the wholeArray
 
         startTime = 0;
         startTime = 0;
-        for (int i = 0; i <wholeArray.length ; i++) wholeArray[i] = 1;
 
         startTime = System.nanoTime();
-        System.arraycopy(wholeArray, 0, arrayPartOne, 0, capacity / 2);
-        System.arraycopy(wholeArray, capacity / 2, arrayPartTwo, 0, capacity / 2 );
+        System.arraycopy(gluedArray, 0, arrayPartOne, 0, capacity / 2);
+        System.arraycopy(gluedArray, capacity / 2, arrayPartTwo, 0, capacity / 2 );
         Thread first = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -45,7 +46,6 @@ public class Main {
                     iteratorForArrayPartTwo++;
                 }
             }
-//
         });
         first.start();
         second.start();
@@ -53,19 +53,24 @@ public class Main {
             first.join();
             second.join();
         } catch (InterruptedException e) {e.printStackTrace();}
-        System.arraycopy(arrayPartOne, 0, wholeArray, 0, capacity / 2);
-        System.arraycopy(arrayPartTwo, 0, wholeArray, capacity / 2, capacity / 2);
+        System.arraycopy(arrayPartOne, 0, gluedArray, 0, capacity / 2);
+        System.arraycopy(arrayPartTwo, 0, gluedArray, capacity / 2, capacity / 2);
         stopTime = System.nanoTime();
-        System.out.println("Время выполнения операции c разделением массива на 2 части и использованием 2 разных потоков " +
-                countAndDisplayTheExecutionTime(stopTime, startTime) + " сек");
-        System.out.println("Сумма элементов массива: " + sumOfArrayElements(wholeArray));
+        System.out.println("The time of the operation is performed by dividing the array into 2 parts and using 2 different threads: " +
+                countAndDisplayTheExecutionTime(stopTime, startTime) + " sec");
+//        System.out.println("sum of array elements: " + sumOfArrayElements(gluedArray)); // Comment off for show sum of the gluedArray
+//        if (wholeArray.equals(gluedArray)) System.out.println("The calculations are correct, the results of time measurements can be applied."); //why it's doesn't work?
+        if (sumOfArrayElements(wholeArray) == sumOfArrayElements(gluedArray)) System.out.println("\n" + "The calculations are correct, the results of time measurements can be applied.");
+        else System.out.println("\n" + "The calculations are not correct, the results of time measurement are invalid.");
     }
 
+    // method for counting execution time
     private static float countAndDisplayTheExecutionTime(long stopTime, long startTime){
         float executionTimeOfTheOperation = (stopTime - startTime) * 0.000000001f;
         return executionTimeOfTheOperation;
     }
 
+    // method for counting sum of array elements
     private static float sumOfArrayElements(float[] array) {
         float sumOfArrayElements = 0;
         for (int i = 0; i < array.length; i++) sumOfArrayElements += array[i];
